@@ -9,6 +9,7 @@ router.post('/', async (req, res) => {
   if (error) res.status(400).send(error.details[0].message);
 
   const user = await User.findOne({ email: req.body.email });
+  console.log(user);
   if (!user) return res.status(400).send('Invalid email or password.');
 
   const validPassword = await bcrypt.compare(req.body.password, user.password);
@@ -22,7 +23,7 @@ router.post('/', async (req, res) => {
 function validate(req) {
   const schema = Joi.object({
     email: Joi.string().email().min(3).max(255).required(),
-    password: Joi.string().required(),
+    password: Joi.string().required()
   });
 
   return schema.validate(req);
