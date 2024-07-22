@@ -22,7 +22,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const imageQueue = require('../queues/imageQueue');
 router.use(express.json());
-router.get('/', authorize, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const footers = await Footer.find({}, 'name status');
     res.send(footers);
@@ -96,7 +96,7 @@ router.post('/', authorize, upload.any(), async (req, res) => {
   }
 });
 // GET all Footers
-router.get('/footers', async (req, res) => {
+router.get('/footers', authorize, async (req, res) => {
   try {
     const footers = await Footer.find().populate('followUs').populate('pageLinks').populate('accordians').populate('otherText');
     res.send(footers);
@@ -228,15 +228,6 @@ router.put('/:id/status', authorize, async (req, res) => {
     const { status } = req.body;
     const footer = await Footer.findById(footerId);
     if (!footer) return res.status(404).send('Footer not found');
-    if (status === 'active') {
-      if (footer.name === 'Set All Footers') {
-        // Set all other footers to inactive
-        await Footer.updateMany({ _id: { $ne: footerId } }, { $set: { status: 'inactive' } });
-      } else {
-        // Make 'Set All Footers' inactive
-        await Footer.updateMany({ name: 'Set All Footers' }, { $set: { status: 'inactive' } });
-      }
-    }
     footer.status = status;
     await footer.save();
     res.send(footer);
@@ -248,7 +239,6 @@ async function saveImage(file, cloudinaryId = null, isLogo = false) {
   try {
     const encodedImage = file.buffer.toString('base64');
     const dataURI = `data:${file.mimetype};base64,${encodedImage}`;
-
     const transformation = isLogo
       ? [
           {
@@ -257,14 +247,11 @@ async function saveImage(file, cloudinaryId = null, isLogo = false) {
           }
         ]
       : [];
-
     const uploadOptions = {
       ...(cloudinaryId && { public_id: cloudinaryId, overwrite: true }),
       transformation
     };
-
     const result = await cloudinary.uploader.upload(dataURI, uploadOptions);
-
     return {
       cloudinaryId: result.public_id,
       imageUrl: result.secure_url
