@@ -32,3 +32,6 @@ connectDb().then(() => {
   app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
   deleteOutdatedOdds();
 });
+
+// Export the app for Vercel
+module.exports = app;
