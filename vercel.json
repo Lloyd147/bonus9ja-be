@@ -2,11 +2,11 @@
   "version": 2,
   "builds": [
     {
-      "src": "src/index.js",
+      "src": "index.js",
       "use": "@vercel/node"
     },
     {
-      "src": "src/jobs/deleteOutdatedOdds.js",
+      "src": "jobs/deleteOutdatedOdds.js",
       "use": "@vercel/node"
     }
   ],
@@ -18,14 +18,8 @@
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization"
       },
-      "dest": "src/index.js",
+      "dest": "index.js",
       "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     }
-  ],
-  "functions": {
-    "src/routes/**/*.js": {
-      "maxDuration": 60,
-      "memory": 1024
-    }
-  }
+  ]
 }
