@@ -97,6 +97,7 @@ router.post('/', authorize, upload.any(), async (req, res) => {
 router.get('/footers', async (req, res) => {
   try {
     const footers = await Footer.find().populate('followUs').populate('pageLinks').populate('accordians').populate('otherText');
+    console.log(footers);
     res.send(footers);
   } catch (err) {
     res.status(500).send({ error: err.message });
