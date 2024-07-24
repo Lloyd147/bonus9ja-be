@@ -42,8 +42,6 @@ router.post('/', authorize, upload.any(), async (req, res) => {
       if (items && items.length > 0) {
         const processedItems = await Promise.all(
           items.map(async (item, index) => {
-            const { error } = validateFunction(item);
-            if (error) throw new Error(`Validation error: ${error.details[0].message}`);
             if (fieldName) {
               const file = req.files.find((f) => f.fieldname === `${fieldName}[${index}][icon]`);
               if (file) {
@@ -96,7 +94,7 @@ router.post('/', authorize, upload.any(), async (req, res) => {
   }
 });
 // GET all Footers
-router.get('/footers', authorize, async (req, res) => {
+router.get('/footers', async (req, res) => {
   try {
     const footers = await Footer.find().populate('followUs').populate('pageLinks').populate('accordians').populate('otherText');
     res.send(footers);
