@@ -226,6 +226,15 @@ router.put('/:id/status', authorize, async (req, res) => {
     const { status } = req.body;
     const footer = await Footer.findById(footerId);
     if (!footer) return res.status(404).send('Footer not found');
+    if (status === 'active') {
+      if (footer.name === 'Set All Footers') {
+        // Set all other footers to inactive
+        await Footer.updateMany({ _id: { $ne: footerId } }, { $set: { status: 'inactive' } });
+      } else {
+        // Make 'Set All Footers' inactive
+        await Footer.updateMany({ name: 'Set All Footers' }, { $set: { status: 'inactive' } });
+      }
+    }
     footer.status = status;
     await footer.save();
     res.send(footer);
