@@ -10,6 +10,7 @@ const followUsSchema = new mongoose.Schema({
   icon: logoSchema
 });
 const pageLinksSchema = new mongoose.Schema({
+  name: { type: String, required: true },
   link: { type: String, required: true }
 });
 const accordionItemSchema = new mongoose.Schema({
@@ -53,6 +54,7 @@ const validateFollowUs = (req) => {
 };
 const validatePageLinks = (req) => {
   const schema = Joi.object({
+    name: Joi.string().uri().required(),
     link: Joi.string().uri().required()
   });
   return schema.validate(req);
